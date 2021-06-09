@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public System.Action gameEnd = null;
+
+
     Collider2D collider = null;
     Rigidbody2D rigidbody = null;
     bool canMove = false;
@@ -12,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     float jumpForce = 0;
     bool moveR, moveL = false;
-    // Start is called before the first frame update
+
     void Awake()
     {
         collider = this.GetComponent<BoxCollider2D>();
@@ -24,7 +27,6 @@ public class Player : MonoBehaviour
         moveL = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Move();
@@ -34,13 +36,21 @@ public class Player : MonoBehaviour
     {
         if(canMove)
         {
-            if (moveR)
+            if (moveR && this.transform.position.x < 9.0f)
                 this.transform.position += new Vector3(moveSpeed * Time.deltaTime, 0.0f, 0.0f);
-            else if (moveL)
+            else if (moveL && this.transform.position.x > -9.0f)
                 this.transform.position -= new Vector3(moveSpeed * Time.deltaTime, 0.0f, 0.0f);
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.tag == "Enemy")
+        {
+            //Destroy(collider.gameObject);
+            gameEnd.Invoke();
+        }
+    }
     #region UIEvent
     public void OnPress_R()
     {

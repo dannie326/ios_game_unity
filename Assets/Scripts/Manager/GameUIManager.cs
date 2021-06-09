@@ -11,14 +11,20 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     GameObject SettingPage = null;
     [SerializeField]
+    Text endPage_time = null;
+    [SerializeField]
     Button settingBtn = null;
     [SerializeField]
     Text time = null;
     [SerializeField]
     GameObject[] controlBtns = null;
     #endregion
+
     #region private member
+    Timer timer = null;
+    bool isGame = false;
     #endregion
+
     #region UnityCallback
     void Awake()
     {
@@ -28,6 +34,7 @@ public class GameUIManager : MonoBehaviour
         EventManager.Instance.Registration(State.GamePause, OnGamePause);
         EventManager.Instance.Registration(State.GameResume, OnGameResume);
         EventManager.Instance.Registration(State.GameEnd, OnGameEnd);
+        EventManager.Instance.Registration(State.GameRestart, OnGameRestart);
 
         EventManager.Instance.Registration(State.EnableSettingBtn, OnSetting);
     }
@@ -39,15 +46,24 @@ public class GameUIManager : MonoBehaviour
         EventManager.Instance.Cancellation(State.GamePause, OnGamePause);
         EventManager.Instance.Cancellation(State.GameResume, OnGameResume);
         EventManager.Instance.Cancellation(State.GameEnd, OnGameEnd);
+        EventManager.Instance.Cancellation(State.GameRestart, OnGameRestart);
 
         EventManager.Instance.Cancellation(State.EnableSettingBtn, OnSetting);
     }
+    void Update()
+    {
+        if(isGame)
+            time.text = timer.time.ToString("0.00");
+    }
     #endregion
+
     #region Event
     void OnGameInit(EventBase e)
     {
         Debug.Log("[UI]: Init");
         SettingPage.SetActive(false);
+        timer = new Timer();
+        timer.Init();
     }
     void OnGameReady(EventBase e)
     {
@@ -56,23 +72,34 @@ public class GameUIManager : MonoBehaviour
     void OnGameStart(EventBase e)
     {
         Debug.Log("[UI]: Start");
+        isGame = true;
+        timer.Start();
         EventManager.Instance.SendEvent(State.EnableControlBtns, true);
         EventManager.Instance.SendEvent(State.EnableSettingBtn, true);
     }
     void OnGamePause(EventBase e)
     {
         Debug.Log("[UI]: Pause");
+        timer.Pause();
         EventManager.Instance.SendEvent(State.EnableControlBtns, false);
     }
     void OnGameResume(EventBase e)
     {
         Debug.Log("[UI]: Resume");
+        timer.Resume();
         EventManager.Instance.SendEvent(State.EnableControlBtns, true);
         EventManager.Instance.SendEvent(State.EnableSettingBtn, true);
     }
     void OnGameEnd(EventBase e)
     {
         Debug.Log("[UI]: End");
+        isGame = false;
+        endPage_time.text = timer.time.ToString("0.00");
+        EventManager.Instance.SendEvent(State.EnableControlBtns, false);
+        EventManager.Instance.SendEvent(State.EnableSettingBtn, false);
+    }
+    void OnGameRestart(EventBase e)
+    {
         EventManager.Instance.SendEvent(State.EnableControlBtns, false);
         EventManager.Instance.SendEvent(State.EnableSettingBtn, false);
     }
@@ -84,6 +111,7 @@ public class GameUIManager : MonoBehaviour
         settingBtn.enabled = enable;
     }
     #endregion
+
     #region member function
     public void OnClick_Setting()
     {
@@ -111,9 +139,44 @@ public class GameUIManager : MonoBehaviour
     public void OnClick_SettingPage_Back2Menu()
     {
         Debug.Log("[UI]: click back2menu");
-        EventManager.Instance.SendEvent(State.GameEnd);
+        EventManager.Instance.SendEvent(AppState.MenuEnter);
         SettingPage.SetActive(false);
     }
 
     #endregion
+}
+
+public class Timer
+{
+    float pauseTime = 0;
+    float startTime = 0;
+    bool isPause = false;
+    public void Init()
+    {
+        pauseTime = 0;
+        startTime = 0;
+        isPause = false;
+    }
+    public void Start() 
+    {
+        startTime = Time.time;
+        pauseTime = 0;
+    }
+    public void Pause()
+    {
+        isPause = true;
+        pauseTime += Time.time - startTime;
+    }
+    public void Resume()
+    {
+        isPause = false;
+        startTime = Time.time;
+    }
+    public float time
+    {
+        get
+        {
+             return (isPause)? pauseTime : Time.time - startTime + pauseTime;
+        }
+    }
 }

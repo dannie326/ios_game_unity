@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     }
     private void OnDestroy()
     {
-        Debug.LogWarning(transform.position.x);
+        //Debug.LogWarning(transform.position.x);
     }
     public void Fly(int d)
     {
@@ -40,13 +40,5 @@ public class Enemy : MonoBehaviour
         collider.enabled = false;
         rigidbody.velocity = Vector2.zero;
     }
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
 
-        if (collider.gameObject.tag == "Player")
-        {
-            Debug.LogError(transform.position.x);
-            Destroy(this.gameObject);
-        }
-    }
 }

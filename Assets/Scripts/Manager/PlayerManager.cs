@@ -13,10 +13,12 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     GameObject[] controlBtns = null;
     #endregion
+
     #region private member
     Vector3 spawnPos = Vector3.zero;
     Player player = null;
     #endregion
+
     #region UnityCallback
     void Awake()
     {
@@ -46,11 +48,12 @@ public class PlayerManager : MonoBehaviour
     void OnGameInit(EventBase e)
     {
         Debug.Log("[Player]: Init");
-
+       
         // spawn player prefab
         spawnPos = new Vector3(0, -2.9f, 0.0f);
         if (player != null) Destroy(player.gameObject);
         player = Instantiate(playerPref, spawnPos, Quaternion.identity);
+        ClearControl();
         SetUpControl();
         EventManager.Instance.SendEvent(State.EnableControlBtns, false);
     }
@@ -61,6 +64,7 @@ public class PlayerManager : MonoBehaviour
     void OnGameStart(EventBase e)
     {
         Debug.Log("[Player]: Start");
+        player.gameEnd += triggerResult;
     }
     void OnGamePause(EventBase e)
     {
@@ -112,6 +116,10 @@ public class PlayerManager : MonoBehaviour
         triggerL.triggers[1].callback.RemoveAllListeners();
         EventTrigger triggerJ = controlBtns[2].GetComponent<EventTrigger>();
         triggerJ.triggers[0].callback.RemoveAllListeners();
+    }
+    void triggerResult()
+    {
+        EventManager.Instance.SendEvent(State.GameEnd);
     }
     #endregion
 }

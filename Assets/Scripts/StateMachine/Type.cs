@@ -11,7 +11,8 @@ namespace StateMachine
         MenuEnter,
         MenuExit,
         GameEnter,
-        GameExit
+        GameExit,
+        SelectLevel
     }
     enum State
     {

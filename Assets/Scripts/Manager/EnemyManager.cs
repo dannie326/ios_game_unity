@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using StateMachine;
 
-public class LevelManager : MonoBehaviour
+public class EnemyManager : MonoBehaviour
 {
     #region SerializeField
     [SerializeField]
     EnemyShooter enemyShooter = null;
     #endregion
+
     #region UnityCallback
     void Awake()
     {
@@ -18,6 +19,7 @@ public class LevelManager : MonoBehaviour
         EventManager.Instance.Registration(State.GamePause, OnGamePause);
         EventManager.Instance.Registration(State.GameResume, OnGameResume);
         EventManager.Instance.Registration(State.GameEnd, OnGameEnd);
+        EventManager.Instance.Registration(State.GameRestart, OnGameRestart);
     }
     void OnDestroy()
     {
@@ -27,12 +29,16 @@ public class LevelManager : MonoBehaviour
         EventManager.Instance.Cancellation(State.GamePause, OnGamePause);
         EventManager.Instance.Cancellation(State.GameResume, OnGameResume);
         EventManager.Instance.Cancellation(State.GameEnd, OnGameEnd);
+        EventManager.Instance.Cancellation(State.GameRestart, OnGameRestart);
     }
     #endregion
+
     #region Event
     void OnGameInit(EventBase e)
     {
         Debug.Log("[Level]: Init");
+        enemyShooter.GameEnd();
+        enemyShooter.gameObject.SetActive(true);
     }
     void OnGameReady(EventBase e)
     {
@@ -57,6 +63,13 @@ public class LevelManager : MonoBehaviour
     {
         Debug.Log("[Level]: End");
         enemyShooter.GameEnd();
+        enemyShooter.gameObject.SetActive(false);
+    }
+    void OnGameRestart(EventBase e)
+    {
+        Debug.Log("[Level]: Restart");
+        enemyShooter.GameEnd();
+        enemyShooter.gameObject.SetActive(false);
     }
     #endregion
 }
