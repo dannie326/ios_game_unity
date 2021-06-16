@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
     }
     public void OnClick_J()
     {
-        if((this.transform.position.y<4 && rigidbody.velocity.y<0.5f))
+        if((this.transform.position.y<3.6 && rigidbody.velocity.y<0.5f))
             rigidbody.AddForce(new Vector2(0.0f, jumpForce));
     }
     #endregion

@@ -37,8 +37,8 @@ public class EnemyManager : MonoBehaviour
     void OnGameInit(EventBase e)
     {
         Debug.Log("[Level]: Init");
-        enemyShooter.GameEnd();
         enemyShooter.gameObject.SetActive(true);
+        enemyShooter.GameEnd();
     }
     void OnGameReady(EventBase e)
     {

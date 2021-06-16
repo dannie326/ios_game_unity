@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
 
     void Awake()
     {
+        speed = 5;
         collider = this.GetComponent<BoxCollider2D>();
         rigidbody = this.GetComponent<Rigidbody2D>();
     }
@@ -25,7 +26,7 @@ public class Enemy : MonoBehaviour
     }
     private void OnDestroy()
     {
-        //Debug.LogWarning(transform.position.x);
+        //Debug.LogWarning(speed + "\t"+transform.position.x);
     }
     public void Fly(int d)
     {

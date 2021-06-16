@@ -105,6 +105,10 @@ public class GameManager : MonoBehaviour
     void OnGameInit(EventBase e)
     {
         Debug.Log("[Game]: Init");
+        foreach(GameObject g in levelObjList)
+        {
+            g.SetActive(false);
+        }
         var eventData = e as EventData;
         int level = (int)eventData.args[0];
         levelObjList[level].SetActive(true);
